@@ -414,7 +414,7 @@ form{display:flex;flex-direction:column;gap:18px;position:relative}
         <div class="field"><label for="f-company">Company</label><input id="f-company" name="company" autocomplete="organization" required><div class="err" id="e-company"></div></div>
         <div class="field"><label for="f-title">Job title</label><input id="f-title" name="title" autocomplete="organization-title" required><div class="err" id="e-title"></div></div>
         <div class="field"><label for="f-diet">Dietary requirements or allergies</label><textarea id="f-diet" name="diet" placeholder="Optional"></textarea></div>
-        <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="text" name="hp_check" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="btn btn-wine submit" type="submit" id="sendBtn">Send my request</button>
         <div class="err" id="e-send" role="alert"></div>
       </form>
@@ -849,12 +849,12 @@ const Music=(function(){
     const btn=document.getElementById('sendBtn'),sendErr=document.getElementById('e-send');
     sendErr.textContent='';
     if(ENDPOINT){
-      const payload={};['name','email','company','title','diet','website'].forEach(k=>payload[k]=form.elements[k].value);
+      const payload={};['name','email','company','title','diet','hp_check'].forEach(k=>payload[k]=form.elements[k].value);
       btn.disabled=true;btn.textContent='Sending…';
       try{
         const res=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
-        const out=await res.json().catch(()=>({ok:res.ok}));
-        if(!out.ok) throw new Error(out.error||'failed');
+        const out=await res.json().catch(()=>null);
+        if(!out||out.ok!==true) throw new Error((out&&out.error)||'not_json');
       }catch(err){
         btn.disabled=false;btn.textContent='Send my request';
         sendErr.textContent='We couldn\'t send your request. Check your connection and try again.';
